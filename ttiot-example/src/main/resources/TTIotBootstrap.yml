@@ -1,0 +1,24 @@
+TTiot:
+  port: 8729
+  host: 0.0.0.0
+  heartbeatTimeout: 10
+  netty:
+    bossGroupCount: -1
+    workerGroupCount: -1
+    leakDetectorLevel: DISABLED
+    maxPayloadSize: 65536
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    timeout: 2000
+    connectionTimeout: 2000
+    soTimeout: 2000
+    password: TTIot
+    database: 0
+    ssl: false
+    maxIdle: 8
+    minIdle: 0
+    maxTotal: 8
+    maxWaitMillis: -1
+
+
