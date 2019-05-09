@@ -6,7 +6,7 @@
 </p>
 <p align="center">
 	<a>
-		<img src="https://travis-ci.com/shijun90/TTIot.svg?branch=master"></img>
+		<img src="https://api.travis-ci.org/shijun90/TTIot.svg?branch=master"></img>
 	</a>
 	<a target="_blank" href="https://www.apache.org/licenses/LICENSE-2.0.html">
 		<img src="https://img.shields.io/badge/License-Apache--2.0-brightgreen.svg" ></img>
