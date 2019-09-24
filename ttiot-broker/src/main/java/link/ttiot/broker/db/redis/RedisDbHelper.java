@@ -205,7 +205,7 @@ public class RedisDbHelper implements DbHelper, RedisDbHelperHeaderConstant {
 
     @Override
     public MessageStore getRetainMessage(String tenantId, String topic) {
-        return (MessageStore) Optional.ofNullable(RedisDbHelperHeaderConstant.getRetainMessageKey(tenantId, topic)).map(u -> ttIotRedis.get(u)).get();
+        return (MessageStore) ttIotRedis.get(RedisDbHelperHeaderConstant.getRetainMessageKey(tenantId, topic));
     }
 
     @Override

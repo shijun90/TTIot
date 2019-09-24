@@ -40,7 +40,7 @@ import java.util.Optional;
  */
 @ChannelHandler.Sharable
 @Slf4j
-public class MqttDecoderHandler extends SimpleChannelInboundHandler<MqttMessage>  implements FunctionApi {
+public class MqttDecoderHandler extends SimpleChannelInboundHandler<MqttMessage> implements FunctionApi {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MqttMessage msg) {
@@ -53,7 +53,7 @@ public class MqttDecoderHandler extends SimpleChannelInboundHandler<MqttMessage>
     }
 
     @Override
-    public void userEventTriggered(ChannelHandlerContext ctx, Object evt){
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent idleStateEvent = (IdleStateEvent) evt;
             predicateDo(ctx.channel(), u -> idleStateEvent.state() == IdleState.ALL_IDLE, u -> {

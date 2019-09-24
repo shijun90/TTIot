@@ -122,7 +122,7 @@ public class ApplicationEventMulticaster extends DefaultAbstractMulticaster impl
                 }
             }
         }
-        throw new DependencyException("Type :" + type + " not found");
+        throw new DependencyException("class type :" + type + " not found");
     }
 
 }

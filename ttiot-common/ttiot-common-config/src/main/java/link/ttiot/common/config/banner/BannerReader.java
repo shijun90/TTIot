@@ -21,8 +21,14 @@ import cn.hutool.core.lang.Console;
 import cn.hutool.core.text.StrFormatter;
 import io.netty.util.NettyRuntime;
 import io.netty.util.internal.SystemPropertyUtil;
+import link.ttiot.common.config.ConfigurationFileReader;
 import link.ttiot.common.config.ContextConfig;
 import link.ttiot.common.core.constant.CommonConstant;
+import lombok.SneakyThrows;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.URL;
 
 /**
  * @author: shijun
@@ -38,9 +44,18 @@ public class BannerReader {
                 CommonConstant.EVENTLOOP_KEY, NettyRuntime.availableProcessors() * 2));
     }
 
+    @SneakyThrows
     private static void loaderBanner(Integer port,Integer heartbeatTimeout,String bossGroup,String workerGroup){
-        FileReader fileReader = new FileReader(CommonConstant.BASE_BANNER_CONFIG_FILE);
-        String result = StrFormatter.format(fileReader.readString(), CommonConstant.BASE_VERSION, port.toString(),bossGroup,workerGroup,heartbeatTimeout);
+        URL resource= ConfigurationFileReader.class.getClassLoader().getResource(CommonConstant.BASE_BANNER_CONFIG_FILE);
+        InputStream in=resource.openStream();
+        ByteArrayOutputStream bos=new ByteArrayOutputStream();
+        byte[] buffer=new byte[2048];
+        int lenght=0;
+        while ((lenght=in.read(buffer))!=-1){
+            bos.write(buffer,0,lenght);
+        }
+        in.close();
+        String result=StrFormatter.format(new String(bos.toByteArray(),"UTF-8"),CommonConstant.BASE_VERSION,port.toString(),bossGroup,workerGroup,heartbeatTimeout);
         Console.print(result);
     }
 

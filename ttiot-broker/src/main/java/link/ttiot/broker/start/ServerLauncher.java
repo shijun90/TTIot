@@ -60,9 +60,9 @@ public class ServerLauncher {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
                         ChannelPipeline pipeline = socketChannel.pipeline();
-                        pipeline.addFirst(CommonConstant.HEARTBEAT_HANDLER, new IdleStateHandler(0, 0, tTiotContext.getTTiotStarterContextConfig().TTiot.getHeartbeatTimeout()));
+                        pipeline.addFirst(CommonConstant.MQTT_ENCODE, MqttEncoder.INSTANCE);
+                        pipeline.addLast(CommonConstant.HEARTBEAT_HANDLER, new IdleStateHandler(0, 0, tTiotContext.getTTiotStarterContextConfig().TTiot.getHeartbeatTimeout()));
                         pipeline.addLast(CommonConstant.MQTT_DECODER, new MqttDecoder(tTiotContext.getTTiotStarterContextConfig().TTiot.netty.getMaxPayloadSize()));
-                        pipeline.addLast(CommonConstant.MQTT_ENCODE, MqttEncoder.INSTANCE);
                         pipeline.addLast(CommonConstant.MQTT_HANDLER, new MqttDecoderHandler());
                     }
                 });
