@@ -8,7 +8,7 @@ TTiot:
     leakDetectorLevel: DISABLED
     maxPayloadSize: 65536
   redis:
-    host: 127.0.0.1
+    host: ttiot-redis
     port: 6379
     timeout: 2000
     connectionTimeout: 2000

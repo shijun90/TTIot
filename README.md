@@ -200,10 +200,28 @@ TTIot 提供多种默认的事件供开发者使用，给topic推送消息，例
 
 ```
 
+9. docker-compose
+
+首先，需要安装git与docker
+
+```java
+
+ git clone https://gitee.com/cloudSj/TTIot.git
+ 
+ cd 到项目根目录
+ 
+ mvn clean install
+ 
+ mvn clean install package -Dmaven.test.skip
+ 
+ docker-compose up -d
+
+```
+
 
 ## TTIoT 开源计划
 
-1. docker部署组件
+1. ~~docker部署组件~~
 
 2. HTTP组件以及控制设备HTTPAPI
 
