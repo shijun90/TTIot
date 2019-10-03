@@ -18,9 +18,11 @@ package link.ttiot.common.redis;
 
 import cn.hutool.core.io.IoUtil;
 import link.ttiot.common.config.ContextConfig;
+import link.ttiot.common.core.function.FunctionApi;
 import link.ttiot.common.redis.serializer.FstSerializer;
 import link.ttiot.common.redis.serializer.Serializer;
 import redis.clients.jedis.*;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -30,7 +32,7 @@ import java.util.*;
  * @date: 2019-04-18
  * @description:
  */
-public class RedisSourceProvider {
+public class RedisSourceProvider implements FunctionApi {
 
     private ContextConfig.TTiotStarterContextConfigAttribut.TTiotRedisConfigAttribut redisConfigAttribut;
 
@@ -53,6 +55,16 @@ public class RedisSourceProvider {
 
         configJedisPool(config);
 
+        if ("".equals(redisConfigAttribut.getPassword()) || redisConfigAttribut.getPassword() == null) {
+            setJedisPoolWithoutPassword(config);
+        } else {
+            setJedisPool(config);
+        }
+
+        return this;
+    }
+
+    private void setJedisPool(JedisPoolConfig config) {
         this.pool = new JedisPool(config,
                 redisConfigAttribut.getHost(),
                 redisConfigAttribut.getPort(),
@@ -64,11 +76,13 @@ public class RedisSourceProvider {
                 redisConfigAttribut.isSsl(),
                 null, null, null
         );
-
-
-        return this;
-
     }
+
+
+    private void setJedisPoolWithoutPassword(JedisPoolConfig config) {
+        this.pool = new JedisPool(config, redisConfigAttribut.getHost(), redisConfigAttribut.getPort(), redisConfigAttribut.getConnectionTimeout(), redisConfigAttribut.isSsl());
+    }
+
 
     private void configJedisPool(JedisPoolConfig config) {
         config.setMaxIdle(redisConfigAttribut.getMaxIdle());
