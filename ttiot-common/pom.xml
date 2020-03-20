@@ -14,6 +14,7 @@
         <module>ttiot-common-redis</module>
         <module>ttiot-common-ioc</module>
         <module>ttiot-common-config</module>
+        <module>ttiot-common-context</module>
     </modules>
     <artifactId>ttiot-common</artifactId>
 </project>

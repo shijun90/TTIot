@@ -41,8 +41,8 @@ public class IdGenerator implements FunctionApi, ProtocalConstant {
         return ttIotIdGenerator;
     }
 
-    public String productClientId(String tenantId, String devName) throws Exception {
-        return predicateThrowException(tenantId + SEPARATOR + devName, u -> u.length() > CLIENT_IDENTIFY_LENGTH, new RuntimeException());
+    public String productClientId(String tenantId, String devName) {
+        return predicateThrowException(tenantId + SEPARATOR + devName, u -> u.length() < CLIENT_IDENTIFY_LENGTH, new RuntimeException());
 
     }
 
@@ -51,11 +51,11 @@ public class IdGenerator implements FunctionApi, ProtocalConstant {
     }
 
     public String productDevNameId(String devName) {
-        return Optional.ofNullable(devName).orElseGet(() -> ObjectId.next());
+        return Optional.ofNullable(devName).orElseGet(() -> ObjectId.next().substring(15,20));
     }
 
     public String productDevPasswordId(String devPassword) {
-        return Optional.ofNullable(devPassword).orElseGet(() -> ObjectId.next());
+        return Optional.ofNullable(devPassword).orElseGet(() -> ObjectId.next().substring(15,20));
     }
 
 }

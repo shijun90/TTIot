@@ -17,9 +17,11 @@
 package link.ttiot.common.ioc.multicaster;
 
 import link.ttiot.common.ioc.core.ApplicationListener;
+import link.ttiot.common.ioc.core.RuleHandler;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,9 +39,13 @@ public class ListenerRetriever {
     @Getter
     public final Set<ApplicationListener<?>> defaultApplicationListeners;
 
+    @Getter
+    public final HashMap<String,Class<RuleHandler>> ruleHanlders;
+
     public ListenerRetriever() {
         applicationListeners = new HashSet<>();
         defaultApplicationListeners = new HashSet<>();
+        ruleHanlders=new HashMap<>();
     }
 
     public void addApplicationListener(boolean isdefault, ApplicationListener applicationListener) {
@@ -53,4 +59,13 @@ public class ListenerRetriever {
         }
     }
 
+    public void addRuleHanlder(String name, Class<RuleHandler> ruleHandlerClass) {
+        Class<?> interfaces[] = ruleHandlerClass.getInterfaces();
+        for (Class<?> inte : interfaces) {
+            if (inte==RuleHandler.class){
+                log.info("RuleHandler {} are added in TTIOC, name is : {}",ruleHandlerClass,name);
+                ruleHanlders.put(name,ruleHandlerClass);
+            }
+        }
+    }
 }

@@ -29,6 +29,32 @@ Broker组件,TTIot把TCP/IP协议族上的协议都转换成了事件池，开�
 </p>
 
 
+
+
+## 2.0版本重要更新
+
+1. 多协议转换引擎-一个端口支持三种协议HTTP/WEBSOCKET/TCP，上层协议使用的依然是MQTT，支持使用这三种不同协议的客户端相互通信（详见使用说明.10）
+```java
+
+使用HTTP协议向设备投递消息
+
+Headers:userName //设备帐号
+        tenantId //租户编号
+        password //设备密码
+Body:
+     {
+    "mqttQos": 1, //消息质量
+    "payload": {  //消息体
+        "rule": "chat",
+        "content": "hello"
+    },
+    "retain": false, //是否为retain消息
+    "topic": "/m" //推送的话题
+    }
+
+```
+2. 支持消息路由引擎@Ruler-给消息定义规则(详见使用说明.12)
+
 ## 功能
 
 1. 认证授权(auth)
@@ -217,13 +243,64 @@ TTIot 提供多种默认的事件供开发者使用，给topic推送消息，例
  docker-compose up -d
 
 ```
+10. webSocket接入
 
+```java
+TTIOT内置了webSocket协议转换器，开发者只需要关注业务逻辑，无需关注协议处理、转换层面的相关问题。
+  
+附上webSocket-mqtt协议的调试工具：http://www.tongxinmao.com/txm/webmqtt.php
+
+```
+
+11. HTTP接入及设备控制
+
+```java
+1. TTIOT目前只接受POST类型的请求，格式如下:
+
+Headers:userName //设备帐号
+        tenantId //租户编号
+        password //设备密码
+Body:
+     {
+    "mqttQos": 1, //消息质量
+    "payload": {  //消息体
+        "rule": "chat",
+        "content": "hello"
+    },
+    "retain": false, //是否为retain消息
+    "topic": "/m" //推送的话题
+    }
+
+2. HTTP由于协议本身的特性只支持QOS类型为1或2
+```
+
+12. 规则路由@Ruler
+
+```java
+如果消息的内容符合
+     {
+        "rule": "chat",
+        "content": "hello"
+     } 
+上诉的消息格式，TTIOT将自动触发规则路由器，将消息自动投递到与rule值对应的处理器上如：
+  
+@Ruler(name = "chat")
+public class ChatRuleHandler implements RuleHandler {
+
+    @Override
+    public void handler(MqttPayloadVo mqttPayloadVo) {
+        System.out.println(mqttPayloadVo);
+    }
+}
+
+开发者可以自定义业务处理逻辑
+```
 
 ## TTIoT 开源计划
 
 1. ~~docker部署组件~~
 
-2. HTTP组件以及控制设备HTTPAPI
+2. ~~HTTP组件以及控制设备HTTPAPI~~
 
 3. 物模型组件
 
@@ -231,7 +308,7 @@ TTIot 提供多种默认的事件供开发者使用，给topic推送消息，例
 
 5. 安卓端组件
 
-6. 规则引擎组件
+6. ~~规则引擎组件~~(后续将会持续更新)
 
 另外：作者诚邀开发人员提交下位机例如PLC/单片机/安卓相关代码，如有计划者可以通过邮箱跟作者取得联系
 

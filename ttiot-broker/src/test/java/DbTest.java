@@ -14,10 +14,10 @@
  * Author: shijun (conttononline@outlook.com)
  */
 
-import link.ttiot.broker.db.DbHelper;
 import link.ttiot.broker.db.redis.RedisDbHelper;
-import link.ttiot.broker.entity.Device;
-import link.ttiot.broker.entity.Tenant;
+import link.ttiot.common.context.db.DbHelper;
+import link.ttiot.common.context.entity.Device;
+import link.ttiot.common.context.entity.Tenant;
 import link.ttiot.common.redis.RedisSourceProvider;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +34,6 @@ public class DbTest {
     DbHelper dbHelper;
     Tenant tenant;
     Device dev;
-    Device dev2;
 
     @Before
     public void before() {
@@ -42,10 +41,8 @@ public class DbTest {
          * 数据源插件
          */
         dbHelper = new RedisDbHelper(new RedisSourceProvider());
-
         tenant = new Tenant("TTIot", "TTIot");
-        dev = new Device("TTIot_client", "TTIot_client_password", "");
-        dev2 = new Device("TTIot_client1", "TTIot_client_password", "");
+        dev = new Device("TTIot_dev", "password", "TTIot");
     }
 
     @Test
@@ -54,16 +51,12 @@ public class DbTest {
          * 保存租户
          */
         Boolean saveTenant1 = dbHelper.saveTenant(tenant);
-        Boolean saveTenant2 = dbHelper.saveTenant(new Tenant("TTIot1", "TTIot"));
-        Tenant getTenant1 = dbHelper.getTenant("TTIotx");
-        Tenant getTenant2 = dbHelper.getTenant("TTIot");
         Tenant getTenant3 = dbHelper.getTenant("TTIot");
         Map<String, Tenant> map = dbHelper.listTenant();
         /**
          * 保存设备
          */
         Boolean saveDev1 = dbHelper.saveDev(dev);
-        Boolean saveDev2 = dbHelper.saveDev(dev2);
         Map<String, Device> listDev = dbHelper.listDevByTenantAndState("TTIot");
 
     }

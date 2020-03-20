@@ -37,5 +37,6 @@ public interface AppProtocalMqttConstant {
     String PINGREQ="PINGREQ";
     String PINGRESP="PINGRESP";
     String DISCONNECT="DISCONNECT";
+    String HTTPREQUEST="httpRequest";
 
 }

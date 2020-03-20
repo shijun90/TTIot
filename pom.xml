@@ -5,11 +5,12 @@
 
     <groupId>link.ttiot</groupId>
     <artifactId>ttiot</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <modules>
         <module>ttiot-broker</module>
         <module>ttiot-common</module>
         <module>ttiot-example</module>
+        <module>ttiot-client-java</module>
     </modules>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
@@ -44,6 +45,7 @@
         <logback-classic.version>1.2.3</logback-classic.version>
         <redis.version>2.9.0</redis.version>
         <junit.version>4.12</junit.version>
+        <commons-lang3.version>3.6</commons-lang3.version>
         <docker.image.prefix>ttiot</docker.image.prefix>
         <!--moudule-->
         <ttiot-broker.version>1.0.0</ttiot-broker.version>
@@ -133,6 +135,11 @@
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${logback-classic.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

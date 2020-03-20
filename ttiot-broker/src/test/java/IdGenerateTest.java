@@ -15,10 +15,10 @@
  */
 
 import cn.hutool.core.lang.Console;
-import link.ttiot.broker.db.DbHelper;
 import link.ttiot.broker.db.redis.RedisDbHelper;
-import link.ttiot.broker.entity.Device;
-import link.ttiot.broker.entity.Tenant;
+import link.ttiot.common.context.db.DbHelper;
+import link.ttiot.common.context.entity.Device;
+import link.ttiot.common.context.entity.Tenant;
 import link.ttiot.common.core.security.IdGenerator;
 import link.ttiot.common.redis.RedisSourceProvider;
 import org.junit.Before;
@@ -33,7 +33,8 @@ import org.junit.Test;
 public class IdGenerateTest {
 
     DbHelper dbHelper;
-    private static String tenantId="TTIOT_DEFAULT_TENANTID";
+
+    private static String tenantId="TT";
 
     /**
      * 数据源
@@ -45,12 +46,12 @@ public class IdGenerateTest {
 
     @Test
     public void tenant(){
-     Tenant tenant = new Tenant(tenantId, "shijun'tenant");
+     Tenant tenant = new Tenant(tenantId, "shijun'tt");
      dbHelper.saveTenant(tenant);
     }
 
     @Test
-    public void dev() throws Exception {
+    public void dev() {
         String devName= IdGenerator.me().productDevNameId(null);
         String passwordId=IdGenerator.me().productDevPasswordId(null);
         String clientId=IdGenerator.me().productClientId(tenantId,devName);

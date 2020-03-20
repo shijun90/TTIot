@@ -64,7 +64,8 @@ public class MessageProvider {
     }
 
     public MqttMessage pingMessageProduce() {
-        return new MqttMessage(new MqttFixedHeader(MqttMessageType.PINGREQ, false, MqttQoS.AT_MOST_ONCE, false, 0));
+        return MqttMessageFactory.newMessage(
+                new MqttFixedHeader(MqttMessageType.PINGRESP, false, MqttQoS.AT_MOST_ONCE, false, 0), null, null);
     }
 
     public MqttUnsubAckMessage unSubAckProduce(MqttUnsubscribeMessage unsubAckMessage) {

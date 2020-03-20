@@ -24,8 +24,10 @@ import link.ttiot.common.core.constant.CommonConstant;
 import link.ttiot.common.ioc.annotation.DefaultListener;
 import link.ttiot.common.ioc.annotation.Inject;
 import link.ttiot.common.ioc.annotation.Listener;
+import link.ttiot.common.ioc.annotation.Ruler;
 import link.ttiot.common.ioc.core.ApplicationEvent;
 import link.ttiot.common.ioc.core.ApplicationListener;
+import link.ttiot.common.ioc.core.RuleHandler;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -73,6 +75,14 @@ public abstract class DefaultAbstractMulticaster {
         //注册defaultListener
         classesDefault.forEach(c -> {
             listenerRetriever.addApplicationListener(true, getApplicationInstance(c, true,true,dbHelper));
+        });
+        //全局扫描ruleHandler
+        classes.forEach(c -> {
+            if (c.getAnnotation(Ruler.class) != null) {
+                Ruler ruler = c.getAnnotation(Ruler.class);
+                Class var1 = ClassUtil.getTypeArgument(c);
+                listenerRetriever.addRuleHanlder(ruler.name(),(Class<RuleHandler>)c);
+            }
         });
     }
 

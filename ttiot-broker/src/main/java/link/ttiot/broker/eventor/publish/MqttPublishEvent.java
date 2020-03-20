@@ -19,7 +19,7 @@ package link.ttiot.broker.eventor.publish;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
-import link.ttiot.broker.context.protocol.mqtt.MqttApplicationEvent;
+import link.ttiot.common.context.protocal.mqtt.MqttApplicationEvent;
 import link.ttiot.common.core.constant.AppProtocalMqttConstant;
 import link.ttiot.common.ioc.annotation.Eventor;
 

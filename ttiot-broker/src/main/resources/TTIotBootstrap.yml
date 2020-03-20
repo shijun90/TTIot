@@ -1,21 +1,23 @@
-version: '1.0.0'
-services:
-  ttiot-redis:
-    image: redis:5.0
-    command: redis-server --requirepass TTIot
-    ports:
-      - 6379:6379
-    restart: always
-    container_name: ttiot-redis
-    hostname: ttiot-redis
+TTiot:
+  port: 8729
+  host: 0.0.0.0
+  heartbeatTimeout: 10
+  netty:
+    bossGroupCount: -1
+    workerGroupCount: -1
+    leakDetectorLevel: DISABLED
+    maxPayloadSize: 6553600
+  redis:
+    host: ttiot-redis
+    port: 6379
+    timeout: 2000
+    connectionTimeout: 2000
+    soTimeout: 2000
+    password: TTIot
+    database: 0
+    ssl: false
+    maxIdle: 8
+    minIdle: 0
+    maxTotal: 8
+    maxWaitMillis: -1
 
-  ttiot-example:
-    build:
-      context: ./
-      dockerfile: ./ttiot-example/Dockerfile
-    restart: always
-    ports:
-      - 8729:8729
-    container_name: ttiot-example
-    hostname: ttiot-example
-    image: ttiot-example

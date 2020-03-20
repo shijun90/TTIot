@@ -16,13 +16,13 @@
 
 package link.ttiot.broker.handler.listener.subscribe;
 
-import link.ttiot.broker.context.protocol.mqtt.MqttApplicationListener;
-import link.ttiot.broker.entity.Subscribe;
 import link.ttiot.broker.eventor.ack.MqttAckEvent;
 import link.ttiot.broker.eventor.publish.MqttPublishDevEvent;
 import link.ttiot.broker.eventor.subscribe.MqttSubscribeEvent;
-import link.ttiot.broker.service.MessageStoreService;
-import link.ttiot.broker.service.SubscribeService;
+import link.ttiot.common.context.entity.Subscribe;
+import link.ttiot.common.context.protocal.mqtt.MqttApplicationListener;
+import link.ttiot.common.context.service.MessageStoreService;
+import link.ttiot.common.context.service.SubscribeService;
 import link.ttiot.common.core.function.FunctionApi;
 import link.ttiot.common.ioc.annotation.DefaultListener;
 import link.ttiot.common.ioc.annotation.Inject;
@@ -43,6 +43,7 @@ public class MqttSubscribeListener extends MqttApplicationListener<MqttSubscribe
     @Inject
     private SubscribeService subscribeService;
 
+    @Inject
     private MessageStoreService messageStoreService;
 
     public MqttSubscribeListener() {

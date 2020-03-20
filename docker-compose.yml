@@ -1,4 +1,4 @@
-version: '1.0.1'
+version: '2'
 services:
   ttiot-redis:
     image: redis:5.0

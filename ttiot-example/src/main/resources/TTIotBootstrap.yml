@@ -13,7 +13,7 @@ TTiot:
     timeout: 2000
     connectionTimeout: 2000
     soTimeout: 2000
-    password:
+    password: TTIot
     database: 0
     ssl: false
     maxIdle: 8

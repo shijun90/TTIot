@@ -18,7 +18,7 @@ package link.ttiot.broker.eventor.ack;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.mqtt.MqttMessage;
-import link.ttiot.broker.context.protocol.mqtt.MqttApplicationEvent;
+import link.ttiot.common.context.protocal.mqtt.MqttApplicationEvent;
 import link.ttiot.common.ioc.annotation.Eventor;
 
 

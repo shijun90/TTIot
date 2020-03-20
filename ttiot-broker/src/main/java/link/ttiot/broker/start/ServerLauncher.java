@@ -24,14 +24,22 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.HttpContentCompressor;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.codec.mqtt.MqttDecoder;
 import io.netty.handler.codec.mqtt.MqttEncoder;
+import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
-import link.ttiot.broker.context.Context;
-import link.ttiot.broker.db.DbHelper;
-import link.ttiot.broker.handler.ExceptionHandlerAdapter;
 import link.ttiot.broker.handler.MqttDecoderHandler;
+import link.ttiot.broker.handler.core.ProtocolAdaptiveHandler;
+import link.ttiot.broker.handler.http.HttpRequestHandler;
+import link.ttiot.broker.handler.websocket.MqttWebSocketCodec;
 import link.ttiot.common.config.banner.BannerReader;
+import link.ttiot.common.context.Context;
+import link.ttiot.common.context.db.DbHelper;
+import link.ttiot.common.context.exception.ExceptionHandlerAdapter;
 import link.ttiot.common.core.constant.CommonConstant;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -52,18 +60,17 @@ public class ServerLauncher {
     private DbHelper dbHelper;
 
     public void launch() {
-        tTiotContext=Context.builder().dbHelper(dbHelper).exceptionHandler(exceptionHandler).build();
+        tTiotContext= Context.builder().dbHelper(dbHelper).exceptionHandler(exceptionHandler).build();
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(tTiotContext.getBossGroup(), tTiotContext.getWorkerGroup())
                 .channel(NioServerSocketChannel.class)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    protected void initChannel(SocketChannel socketChannel) throws Exception {
+                    protected void initChannel(SocketChannel socketChannel) {
                         ChannelPipeline pipeline = socketChannel.pipeline();
-                        pipeline.addFirst(CommonConstant.MQTT_ENCODE, MqttEncoder.INSTANCE);
-                        pipeline.addLast(CommonConstant.HEARTBEAT_HANDLER, new IdleStateHandler(0, 0, tTiotContext.getTTiotStarterContextConfig().TTiot.getHeartbeatTimeout()));
-                        pipeline.addLast(CommonConstant.MQTT_DECODER, new MqttDecoder(tTiotContext.getTTiotStarterContextConfig().TTiot.netty.getMaxPayloadSize()));
-                        pipeline.addLast(CommonConstant.MQTT_HANDLER, new MqttDecoderHandler());
+                        //protocol adaptive
+                        pipeline.addFirst(CommonConstant.HEARTBEAT_HANDLER, new IdleStateHandler(0, 0, tTiotContext.getTTiotStarterContextConfig().TTiot.getHeartbeatTimeout()));
+                        pipeline.addLast(CommonConstant.PROTOCOL_ADAPTIVE_HANDLER,new ProtocolAdaptiveHandler());
                     }
                 });
 
