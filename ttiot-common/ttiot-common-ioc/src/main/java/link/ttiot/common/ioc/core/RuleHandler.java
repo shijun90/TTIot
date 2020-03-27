@@ -16,7 +16,7 @@
 
 package link.ttiot.common.ioc.core;
 
-import link.ttiot.common.ioc.vo.MqttPayloadVo;
+import link.ttiot.common.ioc.vo.MqttPayload;
 
 import java.util.EventListener;
 
@@ -25,8 +25,8 @@ import java.util.EventListener;
  * @date: 2019-04-15
  * @description:
  */
-public interface RuleHandler<E extends MqttPayloadVo> extends EventListener {
+public interface RuleHandler<E extends MqttPayload> extends EventListener {
 
-    public void handler(MqttPayloadVo mqttPayloadVo);
+    public void handler(MqttPayload mqttPayloadVo);
 
 }

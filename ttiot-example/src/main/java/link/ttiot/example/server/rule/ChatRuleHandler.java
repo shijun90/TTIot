@@ -16,9 +16,11 @@
 
 package link.ttiot.example.server.rule;
 
+import link.ttiot.common.context.service.DeviceService;
+import link.ttiot.common.ioc.annotation.Inject;
 import link.ttiot.common.ioc.annotation.Ruler;
 import link.ttiot.common.ioc.core.RuleHandler;
-import link.ttiot.common.ioc.vo.MqttPayloadVo;
+import link.ttiot.common.ioc.vo.MqttPayload;
 
 /**
  * @author: shijun
@@ -28,8 +30,11 @@ import link.ttiot.common.ioc.vo.MqttPayloadVo;
 @Ruler(name = "chat")
 public class ChatRuleHandler implements RuleHandler {
 
+    @Inject
+    private DeviceService deviceService;
+
     @Override
-    public void handler(MqttPayloadVo mqttPayloadVo) {
+    public void handler(MqttPayload mqttPayloadVo) {
         System.out.println(mqttPayloadVo);
     }
 }

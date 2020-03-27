@@ -14,10 +14,10 @@
  * Author: shijun (conttononline@outlook.com)
  */
 
-package link.ttiot.broker.handler.http;
+package link.ttiot.common.ioc.vo;
 
-import link.ttiot.common.ioc.vo.MqttPayload;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * @author: shijun
@@ -25,13 +25,11 @@ import lombok.Data;
  * @description:
  */
 @Data
-public class HttpMqttRequestVo {
+@ToString
+public class MqttPayload {
 
-    private String topic;
+    private String rule;
 
-    private int mqttQos;
+    private String content;
 
-    private Boolean retain;
-
-    private MqttPayload payload;
 }

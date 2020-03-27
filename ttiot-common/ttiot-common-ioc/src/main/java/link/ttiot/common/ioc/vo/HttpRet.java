@@ -14,7 +14,7 @@
  * Author: shijun (conttononline@outlook.com)
  */
 
-package link.ttiot.broker.handler.http;
+package link.ttiot.common.ioc.vo;
 
 import cn.hutool.json.JSONUtil;
 import lombok.AllArgsConstructor;
@@ -27,11 +27,12 @@ import lombok.Data;
  */
 @AllArgsConstructor
 @Data
-public class Ret {
+public class HttpRet {
 
     private static int ERROR=500;
     private static int SUCCESS=0;
     private static String SUCCESS_DF_MSG="success";
+    private static String ERROR_MSG_NOTFUND="404 not fund";
 
     private Integer code;
 
@@ -39,12 +40,20 @@ public class Ret {
 
     private String msg;
 
-    public static Ret error(String msg){
-        return new Ret(ERROR,null,msg);
+    public static HttpRet error(String msg){
+        return new HttpRet(ERROR,null,msg);
     }
 
-    public static Ret success(Object data){
-        return new Ret(SUCCESS,data,SUCCESS_DF_MSG);
+    public static HttpRet errorForNotFund(){
+        return new HttpRet(ERROR,null,ERROR_MSG_NOTFUND);
+    }
+
+    public boolean isSuccess(){
+        return this.code==0;
+    }
+
+    public static HttpRet success(Object data){
+        return new HttpRet(SUCCESS,data,SUCCESS_DF_MSG);
     }
 
     public String toJson(){

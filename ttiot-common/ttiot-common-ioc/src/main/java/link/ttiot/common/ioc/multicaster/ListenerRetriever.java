@@ -17,7 +17,9 @@
 package link.ttiot.common.ioc.multicaster;
 
 import link.ttiot.common.ioc.core.ApplicationListener;
+import link.ttiot.common.ioc.core.HttpHandler;
 import link.ttiot.common.ioc.core.RuleHandler;
+import link.ttiot.common.ioc.vo.MqttPayload;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,17 +42,21 @@ public class ListenerRetriever {
     public final Set<ApplicationListener<?>> defaultApplicationListeners;
 
     @Getter
-    public final HashMap<String,Class<RuleHandler>> ruleHanlders;
+    public final HashMap<String, RuleHandler<MqttPayload>> ruleHanlders;
+
+    @Getter
+    public final HashMap<String, HttpHandler> httpHandlers;
 
     public ListenerRetriever() {
         applicationListeners = new HashSet<>();
         defaultApplicationListeners = new HashSet<>();
-        ruleHanlders=new HashMap<>();
+        ruleHanlders = new HashMap<>();
+        httpHandlers=new HashMap<>();
     }
 
     public void addApplicationListener(boolean isdefault, ApplicationListener applicationListener) {
-        log.info("Components {} are added in TTIOC, defualt value is : {}",applicationListener.getClass(),isdefault);
-        if (applicationListener!=null){
+        log.info("Components {} are added in TTIOC, defualt value is : {}", applicationListener.getClass(), isdefault);
+        if (applicationListener != null) {
             if (isdefault) {
                 defaultApplicationListeners.add(applicationListener);
             } else {
@@ -59,13 +65,17 @@ public class ListenerRetriever {
         }
     }
 
-    public void addRuleHanlder(String name, Class<RuleHandler> ruleHandlerClass) {
-        Class<?> interfaces[] = ruleHandlerClass.getInterfaces();
-        for (Class<?> inte : interfaces) {
-            if (inte==RuleHandler.class){
-                log.info("RuleHandler {} are added in TTIOC, name is : {}",ruleHandlerClass,name);
-                ruleHanlders.put(name,ruleHandlerClass);
-            }
+    public void addRuleHanlder(String name, RuleHandler<MqttPayload> ruleHandler) {
+        if (ruleHandler != null) {
+            log.info("RuleHandler {} are added in TTIOC, name is : {}", ruleHandler, name);
+            ruleHanlders.put(name, ruleHandler);
+        }
+    }
+
+    public void addHttpHanlder(String name,HttpHandler httpHandler) {
+        if (httpHandler != null) {
+            log.info("HttpHandler {} are added in TTIOC, name is : {}", httpHandler, name);
+            httpHandlers.put(name, httpHandler);
         }
     }
 }

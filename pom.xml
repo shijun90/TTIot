@@ -48,11 +48,12 @@
         <commons-lang3.version>3.6</commons-lang3.version>
         <docker.image.prefix>ttiot</docker.image.prefix>
         <!--moudule-->
-        <ttiot-broker.version>1.0.0</ttiot-broker.version>
-        <ttiot-common-config.version>1.0.0</ttiot-common-config.version>
-        <ttiot-common.core.version>1.0.0</ttiot-common.core.version>
-        <ttiot-common.ioc.version>1.0.0</ttiot-common.ioc.version>
-        <ttiot-common.redis.version>1.0.0</ttiot-common.redis.version>
+        <ttiot-broker.version>2.0.0</ttiot-broker.version>
+        <ttiot-common-config.version>2.0.0</ttiot-common-config.version>
+        <ttiot-common.core.version>2.0.0</ttiot-common.core.version>
+        <ttiot-common.ioc.version>2.0.0</ttiot-common.ioc.version>
+        <ttiot-common.redis.version>2.0.0</ttiot-common.redis.version>
+        <ttiot-common.context.version>2.0.0</ttiot-common.context.version>
     </properties>
 
     <dependencyManagement>
@@ -82,6 +83,11 @@
                 <groupId>link.ttiot</groupId>
                 <artifactId>ttiot-broker</artifactId>
                 <version>${ttiot-broker.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>link.ttiot</groupId>
+                <artifactId>ttiot-common-context</artifactId>
+                <version>${ttiot-common.context.version}</version>
             </dependency>
             <!--moudule_end-->
             <dependency>

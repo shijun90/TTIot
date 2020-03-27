@@ -16,7 +16,6 @@
 
 package link.ttiot.common.context;
 
-import cn.hutool.core.util.ReflectUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -32,8 +31,7 @@ import link.ttiot.common.core.constant.enums.ThreadPoolEnum;
 import link.ttiot.common.core.provider.bean.SingtonBeanProvider;
 import link.ttiot.common.core.thread.ThreadPoolProvider;
 import link.ttiot.common.ioc.core.ApplicationEvent;
-import link.ttiot.common.ioc.core.RuleHandler;
-import link.ttiot.common.ioc.vo.MqttPayloadVo;
+import link.ttiot.common.ioc.vo.HttpRet;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -134,6 +132,10 @@ public class Context {
 
     public void multicastRuleHandler(String ruleName, Object o) {
         applicationEventMulticaster.multicastRuleHandler(ruleName,o);
+    }
+
+    public HttpRet multicastHttpHandler(String uri, Object o) {
+        return applicationEventMulticaster.multicastHttpHandler(uri,o);
     }
 
 }

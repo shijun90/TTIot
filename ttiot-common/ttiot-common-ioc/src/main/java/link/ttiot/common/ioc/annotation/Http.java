@@ -14,22 +14,21 @@
  * Author: shijun (conttononline@outlook.com)
  */
 
-package link.ttiot.common.ioc.vo;
+package link.ttiot.common.ioc.annotation;
 
-import lombok.Data;
-import lombok.ToString;
+import java.lang.annotation.*;
 
 /**
  * @author: shijun
- * @date: 2020-03-09
+ * @date: 2019-04-15
  * @description:
  */
-@Data
-@ToString
-public class MqttPayloadVo {
+@Documented
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface Http {
 
-    private String rule;
-
-    private String content;
+    String uri() default "";
 
 }

@@ -21,13 +21,12 @@ import cn.hutool.core.exceptions.DependencyException;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.util.ClassUtil;
 import link.ttiot.common.core.constant.CommonConstant;
-import link.ttiot.common.ioc.annotation.DefaultListener;
-import link.ttiot.common.ioc.annotation.Inject;
-import link.ttiot.common.ioc.annotation.Listener;
-import link.ttiot.common.ioc.annotation.Ruler;
+import link.ttiot.common.ioc.annotation.*;
 import link.ttiot.common.ioc.core.ApplicationEvent;
 import link.ttiot.common.ioc.core.ApplicationListener;
+import link.ttiot.common.ioc.core.HttpHandler;
 import link.ttiot.common.ioc.core.RuleHandler;
+import link.ttiot.common.ioc.vo.MqttPayload;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -69,21 +68,26 @@ public abstract class DefaultAbstractMulticaster {
                 classesDefault.removeIf(v -> ClassUtil.getTypeArgument(v) == var1);
                 classesDefault.add(c);
             } else {
-                listenerRetriever.addApplicationListener(false, getApplicationInstance(c,eventor.asynchronous(),false,dbHelper));
+                listenerRetriever.addApplicationListener(false, (ApplicationListener)getApplicationInstance(c,eventor.asynchronous(),false,dbHelper));
             }
         });
         //注册defaultListener
         classesDefault.forEach(c -> {
-            listenerRetriever.addApplicationListener(true, getApplicationInstance(c, true,true,dbHelper));
+            listenerRetriever.addApplicationListener(true, (ApplicationListener)getApplicationInstance(c, true,true,dbHelper));
         });
-        //全局扫描ruleHandler
+
+        //全局扫描ruleHandler\httpHandler
         classes.forEach(c -> {
             if (c.getAnnotation(Ruler.class) != null) {
                 Ruler ruler = c.getAnnotation(Ruler.class);
-                Class var1 = ClassUtil.getTypeArgument(c);
-                listenerRetriever.addRuleHanlder(ruler.name(),(Class<RuleHandler>)c);
+                listenerRetriever.addRuleHanlder(ruler.name(),(RuleHandler<MqttPayload> )getApplicationInstance(c, true,true,dbHelper));
+            }
+            if (c.getAnnotation(Http.class) != null) {
+                Http http = c.getAnnotation(Http.class);
+                listenerRetriever.addHttpHanlder(http.uri(),(HttpHandler) getApplicationInstance(c, true,true,dbHelper));
             }
         });
+
     }
 
 
@@ -102,7 +106,7 @@ public abstract class DefaultAbstractMulticaster {
     /**
      * 装配
      */
-    public ApplicationListener getApplicationInstance(Class c, boolean asynchronous,boolean def,Object dbHelper) {
+    public Object getApplicationInstance(Class c, boolean asynchronous,boolean def,Object dbHelper) {
         try {
             Constructor<?> cons = c.getConstructor();
             Object var = cons.newInstance();
@@ -129,7 +133,7 @@ public abstract class DefaultAbstractMulticaster {
                     }
                 }
             }
-            return (ApplicationListener) var;
+            return var;
         } catch (Throwable e) {
             throw ExceptionUtil.wrap(e, DependencyException.class);
         }

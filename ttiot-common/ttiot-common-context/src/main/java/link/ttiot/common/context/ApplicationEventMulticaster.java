@@ -33,10 +33,13 @@ import link.ttiot.common.core.thread.ThreadPoolProvider;
 import link.ttiot.common.ioc.annotation.Eventor;
 import link.ttiot.common.ioc.core.ApplicationEvent;
 import link.ttiot.common.ioc.core.ApplicationListener;
+import link.ttiot.common.ioc.core.HttpHandler;
 import link.ttiot.common.ioc.core.RuleHandler;
 import link.ttiot.common.ioc.multicaster.DefaultAbstractMulticaster;
 import link.ttiot.common.ioc.multicaster.Multicaster;
-import link.ttiot.common.ioc.vo.MqttPayloadVo;
+import link.ttiot.common.ioc.vo.HttpRequest;
+import link.ttiot.common.ioc.vo.HttpRet;
+import link.ttiot.common.ioc.vo.MqttPayload;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -111,10 +114,18 @@ public class ApplicationEventMulticaster extends DefaultAbstractMulticaster impl
     }
 
     public void multicastRuleHandler(String ruleName, Object o) {
-        Class<RuleHandler> ruleHandlerClass = getListenerRetriever().getRuleHanlders().get(ruleName);
-        if (ruleHandlerClass != null) {
-            RuleHandler ruleHandler = ReflectUtil.newInstance(ruleHandlerClass);
-            ruleHandler.handler((MqttPayloadVo) o);
+        RuleHandler<MqttPayload> ruleHandler = getListenerRetriever().getRuleHanlders().get(ruleName);
+        if (ruleHandler != null) {
+            ruleHandler.handler((MqttPayload) o);
+        }
+    }
+
+    public HttpRet multicastHttpHandler(String uri, Object o) {
+        HttpHandler httpHandler = getListenerRetriever().getHttpHandlers().get(uri);
+        if (httpHandler != null) {
+            return httpHandler.handler((HttpRequest) o);
+        }else {
+            return HttpRet.errorForNotFund();
         }
     }
 

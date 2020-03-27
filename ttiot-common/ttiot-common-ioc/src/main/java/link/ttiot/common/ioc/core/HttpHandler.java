@@ -14,24 +14,19 @@
  * Author: shijun (conttononline@outlook.com)
  */
 
-package link.ttiot.broker.handler.http;
+package link.ttiot.common.ioc.core;
 
-import link.ttiot.common.ioc.vo.MqttPayload;
-import lombok.Data;
+import link.ttiot.common.ioc.vo.HttpRequest;
+import link.ttiot.common.ioc.vo.HttpRet;
+
 
 /**
  * @author: shijun
- * @date: 2020-03-09
+ * @date: 2019-04-15
  * @description:
  */
-@Data
-public class HttpMqttRequestVo {
+public interface HttpHandler{
 
-    private String topic;
+    public HttpRet handler(HttpRequest param);
 
-    private int mqttQos;
-
-    private Boolean retain;
-
-    private MqttPayload payload;
 }

@@ -14,24 +14,30 @@
  * Author: shijun (conttononline@outlook.com)
  */
 
-package link.ttiot.broker.handler.http;
+package link.ttiot.example.server.http;
 
-import link.ttiot.common.ioc.vo.MqttPayload;
-import lombok.Data;
+import link.ttiot.common.context.service.DeviceService;
+import link.ttiot.common.ioc.annotation.Http;
+import link.ttiot.common.ioc.annotation.Inject;
+import link.ttiot.common.ioc.core.HttpHandler;
+import link.ttiot.common.ioc.vo.HttpRequest;
+import link.ttiot.common.ioc.vo.HttpRet;
 
 /**
  * @author: shijun
- * @date: 2020-03-09
+ * @date: 2020-03-25
  * @description:
  */
-@Data
-public class HttpMqttRequestVo {
+@Http(uri = "/demo")
+public class DemoHttpHandler implements HttpHandler {
 
-    private String topic;
+    @Inject
+    private DeviceService deviceService;
 
-    private int mqttQos;
 
-    private Boolean retain;
+    @Override
+    public HttpRet handler(HttpRequest param) {
 
-    private MqttPayload payload;
+        return HttpRet.success(param);
+    }
 }

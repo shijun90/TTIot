@@ -23,7 +23,7 @@ package link.ttiot.common.core.constant;
  */
 public interface CommonConstant {
     String BASE_CONTEXT_CONFIG_FILE = "TTIotBootstrap.yml";
-    String BASE_VERSION = "1.0.0";
+    String BASE_VERSION = "2.0.0";
     String BASE_BANNER_CONFIG_FILE = "banner.txt";
     String MQTT_DECODER="mqttDecoder";
     String MQTT_ENCODE="mqttEncode";

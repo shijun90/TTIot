@@ -32,6 +32,8 @@ import link.ttiot.common.core.constant.CommonConstant;
 import link.ttiot.common.core.function.FunctionApi;
 import link.ttiot.common.ioc.annotation.DefaultListener;
 import link.ttiot.common.ioc.annotation.Inject;
+import link.ttiot.common.ioc.vo.HttpRequest;
+import link.ttiot.common.ioc.vo.HttpRet;
 
 /**
  * @author: shijun
@@ -39,24 +41,22 @@ import link.ttiot.common.ioc.annotation.Inject;
  * @description:
  */
 @DefaultListener
-public class HttpRequestListener  extends ProtocolApplicationListener<HttpRequestEvent> implements FunctionApi {
+public class HttpRequestListener extends ProtocolApplicationListener<HttpRequestEvent> implements FunctionApi {
 
     @Inject
     private DeviceService devService;
 
-    private static String INVALID_REQUEST="invalid request";
+    private static String INVALID_REQUEST = "invalid request";
 
-    private static String RUNTIME_EXCEPTION="unknown exception";
+    private static String RUNTIME_EXCEPTION = "unknown exception";
 
-    private static String AUTHENTICATION_FAILURE="authentication failure";
+    private static String AUTHENTICATION_FAILURE = "authentication failure";
 
-    private static String INVALID_MQTTQOS="mqttqos must be >0 and <1";
+    private static String USER_NAME = "userName";
 
-    private static String USER_NAME="userName";
+    private static String PASSWORD = "password";
 
-    private static String PASSWORD="password";
-
-    private static String TENANT_ID="tenantId";
+    private static String TENANT_ID = "tenantId";
 
     public HttpRequestListener() {
         super();
@@ -65,44 +65,42 @@ public class HttpRequestListener  extends ProtocolApplicationListener<HttpReques
     @Override
     public void onApplicationEvent(HttpRequestEvent httpRequestEvent) {
 
-        try{
-            String path=httpRequestEvent.getSource().uri();
-            HttpHeaders httpHeaders=httpRequestEvent.getSource().headers();
+        try {
+            String path = httpRequestEvent.getSource().uri();
+            HttpHeaders httpHeaders = httpRequestEvent.getSource().headers();
             String body = getBody(httpRequestEvent.getSource());
-            HttpMethod method=httpRequestEvent.getSource().method();
-            //只接受/mqtt和post请求
-            if (!CommonConstant.WEBSOCKET_PATH.equalsIgnoreCase(path)||!HttpMethod.POST.equals(method)){
-                send(httpRequestEvent.getChannelHandlerContext(),Ret.error(INVALID_REQUEST).toJson(), HttpResponseStatus.BAD_REQUEST);
-                return;
-            }else {
-                boolean login = devService.login(httpHeaders.get(TENANT_ID), httpHeaders.get(USER_NAME),httpHeaders.get(PASSWORD));
-                if (login){
-                    HttpMqttRequestVo vo= JSONUtil.toBean(body,HttpMqttRequestVo.class);
-                    if (MqttQoS.AT_MOST_ONCE.value()<=vo.getMqttQos()&&vo.getMqttQos()<=MqttQoS.AT_LEAST_ONCE.value()){
-                        byte[] bytes = JSONUtil.toJsonPrettyStr(vo.getPayload()).getBytes();
-                        publishEvent(new MqttPublishTopicEvent(vo.getTopic(), MqttQoS.valueOf(vo.getMqttQos()) ,bytes,
-                                httpHeaders.get(TENANT_ID),vo.getRetain()));
-
-                        send(httpRequestEvent.getChannelHandlerContext(),Ret.success(null).toJson(),HttpResponseStatus.OK);
-
-                    }else {
-                        send(httpRequestEvent.getChannelHandlerContext(),Ret.error(INVALID_MQTTQOS).toJson(), HttpResponseStatus.BAD_REQUEST);
-                    }
-                }else {
-                    send(httpRequestEvent.getChannelHandlerContext(),Ret.error(AUTHENTICATION_FAILURE).toJson(), HttpResponseStatus.BAD_REQUEST);
+            HttpMethod method = httpRequestEvent.getSource().method();
+            String tenantId = httpHeaders.get(TENANT_ID);
+            String userName = httpHeaders.get(USER_NAME);
+            String password = httpHeaders.get(PASSWORD);
+            HttpRet httpRet;
+            //只接受post请求
+            if (!HttpMethod.POST.equals(method)) {
+                httpRet = HttpRet.error(INVALID_REQUEST);
+            } else {
+                boolean login = devService.login(tenantId, userName, password);
+                if (login) {
+                    httpRet = getTTIotContext().multicastHttpHandler(path, new HttpRequest(userName,password,body ,tenantId ));
+                } else {
+                    httpRet = HttpRet.error(AUTHENTICATION_FAILURE);
                 }
-
             }
-        }catch(Exception e){
-            send(httpRequestEvent.getChannelHandlerContext(),Ret.error(RUNTIME_EXCEPTION).toJson(),HttpResponseStatus.BAD_REQUEST);
+            if (httpRet.isSuccess()) {
+                send(httpRequestEvent.getChannelHandlerContext(), httpRet.toJson(), HttpResponseStatus.OK);
+            } else {
+                send(httpRequestEvent.getChannelHandlerContext(), httpRet.toJson(), HttpResponseStatus.BAD_REQUEST);
+            }
+
+        } catch (Exception e) {
+            send(httpRequestEvent.getChannelHandlerContext(), HttpRet.error(RUNTIME_EXCEPTION).toJson(), HttpResponseStatus.BAD_REQUEST);
             throw e;
-        }finally{
+        } finally {
             httpRequestEvent.getSource().release();
         }
     }
 
 
-    private String getBody(FullHttpRequest request){
+    private String getBody(FullHttpRequest request) {
         ByteBuf buf = request.content();
         return buf.toString(CharsetUtil.UTF_8);
     }

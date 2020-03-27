@@ -21,7 +21,7 @@ import link.ttiot.broker.eventor.publish.MqttPublishTopicEvent;
 import link.ttiot.common.context.Context;
 import link.ttiot.common.ioc.annotation.Listener;
 import link.ttiot.common.ioc.core.AbstractApplicationListener;
-import link.ttiot.common.ioc.vo.MqttPayloadVo;
+import link.ttiot.common.ioc.vo.MqttPayload;
 
 /**
  * @author: shijun
@@ -34,7 +34,7 @@ public class RuleDispatcher extends AbstractApplicationListener<MqttPublishTopic
     @Override
     public void onApplicationEvent(MqttPublishTopicEvent mqttConnectEvent) {
         try {
-            MqttPayloadVo vo = JSONUtil.toBean(new String(mqttConnectEvent.getBytes()), MqttPayloadVo.class);
+            MqttPayload vo = JSONUtil.toBean(new String(mqttConnectEvent.getBytes()), MqttPayload.class);
             Context.me().multicastRuleHandler(vo.getRule(),vo);
         }catch (Exception e){
             return;
