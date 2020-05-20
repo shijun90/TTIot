@@ -28,8 +28,19 @@ Broker组件,TTIot把TCP/IP协议族上的协议都转换成了事件池，开�
 	<img src="./doc/img/broker.jpg" width="400">
 </p>
 
+## 2.1版本重要更新
 
+1. 增加SSL加密功能，同时支持https\wss\tls协议
 
+在配置文件添加
+
+```java
+ssl:
+  enabled: true
+  certificateType: PKCS12
+  certificatePath: /Users/shijun/Desktop/TTIOT/ca/server/3938.pfx
+  certificatePassword: 5J7HDiJM
+```
 
 ## 2.0版本重要更新
 
@@ -313,6 +324,8 @@ public class ChatRuleHandler implements RuleHandler {
 5. 安卓端组件
 
 6. ~~规则引擎组件~~(后续将会持续更新)
+
+7. ~~SSL加密传输~~
 
 另外：作者诚邀开发人员提交下位机例如PLC/单片机/安卓相关代码，如有计划者可以通过邮箱跟作者取得联系
 

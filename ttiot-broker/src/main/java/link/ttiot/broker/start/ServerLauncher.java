@@ -24,25 +24,22 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.http.HttpContentCompressor;
-import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
-import io.netty.handler.codec.mqtt.MqttDecoder;
-import io.netty.handler.codec.mqtt.MqttEncoder;
-import io.netty.handler.stream.ChunkedWriteHandler;
+
+import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.IdleStateHandler;
-import link.ttiot.broker.handler.MqttDecoderHandler;
 import link.ttiot.broker.handler.core.ProtocolAdaptiveHandler;
-import link.ttiot.broker.handler.http.HttpRequestHandler;
-import link.ttiot.broker.handler.websocket.MqttWebSocketCodec;
+import link.ttiot.common.config.ContextConfig;
 import link.ttiot.common.config.banner.BannerReader;
 import link.ttiot.common.context.Context;
 import link.ttiot.common.context.db.DbHelper;
 import link.ttiot.common.context.exception.ExceptionHandlerAdapter;
 import link.ttiot.common.core.constant.CommonConstant;
+import link.ttiot.common.core.ssl.SslBuilder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
 
 /**
  * @author: shijun
@@ -59,23 +56,32 @@ public class ServerLauncher {
 
     private DbHelper dbHelper;
 
+    private SSLContext sslContext;
+
     public void launch() {
-        tTiotContext= Context.builder().dbHelper(dbHelper).exceptionHandler(exceptionHandler).build();
+        tTiotContext = Context.builder().dbHelper(dbHelper).exceptionHandler(exceptionHandler).build();
+        ContextConfig.TTiotStarterContextConfigAttribut ttiotConfig=tTiotContext.getTTiotStarterContextConfig().TTiot;
         ServerBootstrap serverBootstrap = new ServerBootstrap();
+        if (ttiotConfig.ssl.isEnabled()){
+            sslContext = new SslBuilder().createSslContext(ttiotConfig.ssl.getCertificateType(),ttiotConfig.ssl.getCertificatePath(),ttiotConfig.ssl.getCertificatePassword());
+        }
         serverBootstrap.group(tTiotContext.getBossGroup(), tTiotContext.getWorkerGroup())
                 .channel(NioServerSocketChannel.class)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) {
                         ChannelPipeline pipeline = socketChannel.pipeline();
+                        if (ttiotConfig.ssl.isEnabled()) {
+                            addSslHandler(pipeline);
+                        }
                         //protocol adaptive
-                        pipeline.addFirst(CommonConstant.HEARTBEAT_HANDLER, new IdleStateHandler(0, 0, tTiotContext.getTTiotStarterContextConfig().TTiot.getHeartbeatTimeout()));
-                        pipeline.addLast(CommonConstant.PROTOCOL_ADAPTIVE_HANDLER,new ProtocolAdaptiveHandler());
+                        pipeline.addLast(CommonConstant.HEARTBEAT_HANDLER, new IdleStateHandler(0, 0, ttiotConfig.getHeartbeatTimeout()));
+                        pipeline.addLast(CommonConstant.PROTOCOL_ADAPTIVE_HANDLER, new ProtocolAdaptiveHandler());
                     }
                 });
 
         try {
-            Channel channel = serverBootstrap.bind(tTiotContext.getTTiotStarterContextConfig().TTiot.getHost(), tTiotContext.getTTiotStarterContextConfig().TTiot.getPort()).sync().channel();
+            Channel channel = serverBootstrap.bind(ttiotConfig.getHost(), ttiotConfig.getPort()).sync().channel();
             tTiotContext.setServerChannel(channel);
         } catch (InterruptedException e) {
             log.error("TTIot boot failed！");
@@ -85,13 +91,26 @@ public class ServerLauncher {
         log.info("TTIot starting success!");
     };
 
-    public ServerLauncher exceptionHandler(ExceptionHandlerAdapter exceptionHandler){
-        this.exceptionHandler=exceptionHandler;
+
+    public void addSslHandler(ChannelPipeline channelPipeline) {
+        try {
+            SSLEngine sslEngine = sslContext.createSSLEngine();
+            sslEngine.setUseClientMode(false);
+            sslEngine.setNeedClientAuth(false);
+            sslEngine.setWantClientAuth(false);
+            channelPipeline.addLast(new SslHandler(sslEngine));
+        } catch (Exception e) {
+            log.error("is not ssl request... and " + e.getMessage(), e);
+        }
+    }
+
+    public ServerLauncher exceptionHandler(ExceptionHandlerAdapter exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
         return this;
     };
 
-    public ServerLauncher dbHelper(DbHelper dbHelper){
-        this.dbHelper=dbHelper;
+    public ServerLauncher dbHelper(DbHelper dbHelper) {
+        this.dbHelper = dbHelper;
         return this;
     }
 }

@@ -7,6 +7,11 @@ TTiot:
     workerGroupCount: -1
     leakDetectorLevel: DISABLED
     maxPayloadSize: 65536
+  ssl:
+    enabled: true
+    certificateType: PKCS12
+    certificatePath:
+    certificatePassword:
   redis:
     host: ttiot-redis
     port: 6379

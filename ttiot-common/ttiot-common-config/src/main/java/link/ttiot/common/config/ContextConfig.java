@@ -57,6 +57,23 @@ public class ContextConfig {
 
         public TTiotRedisConfigAttribut redis;
 
+        public Ssl ssl;
+
+        public static class Ssl {
+            @Getter
+            @Setter
+            private boolean enabled;
+            @Getter
+            @Setter
+            private String certificateType;
+            @Getter
+            @Setter
+            private String certificatePath;
+            @Getter
+            @Setter
+            private String certificatePassword;
+        }
+
 
         public static class TTiotStarterContextNettyConfigAttribut {
             @Getter
