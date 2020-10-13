@@ -44,7 +44,7 @@
         <slf4j-api.version>1.7.25</slf4j-api.version>
         <logback-classic.version>1.2.3</logback-classic.version>
         <redis.version>2.9.0</redis.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.1</junit.version>
         <commons-lang3.version>3.6</commons-lang3.version>
         <docker.image.prefix>ttiot</docker.image.prefix>
         <!--moudule-->
